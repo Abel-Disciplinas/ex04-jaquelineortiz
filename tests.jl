@@ -9,8 +9,10 @@ function tests()
                 (x -> x * exp(x) - 1, 0, 1) ]
     for i = 1:length(funcoes)
         (f, a, b) = funcoes[i]
-        # Seu código aqui
+        x, fx, k = biseccao(f, a, b, :bisseccao)
+        println("Exemplo $i")
+        println("x = $x")
+        println("fx = $fx")
+        println("k = $k")
     end
 end
-
-tests()
