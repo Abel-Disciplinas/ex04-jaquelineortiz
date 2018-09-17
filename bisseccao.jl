@@ -1,7 +1,7 @@
-function bisseccao(f::Function, a::Real, b::Real, estrategia::Symbol; atol=1e-6, rtol=1e-6, maxiter=10_000, fdertol=1e-12)
-    function escolha(f::Function, a::Real, b::Real, estrategia::Symbol)
+function bisseccao(f::Function, a::Real, b::Real, estrategia::Symbol; atol=1e-6, rtol=1e-6, maxiter=10_000)
+    function _estrategia(f::Function, a::Real, b::Real, estrategia::Symbol)
         if estrategia == :bisseccao
-            x = 0.5 * a + 0.5 * b
+            x = (a + b) / 2
         elseif estrategia == :esquerda
             x = 0.1 * a + 0.9 * b
         elseif estrategia == :direita
@@ -14,27 +14,27 @@ function bisseccao(f::Function, a::Real, b::Real, estrategia::Symbol; atol=1e-6,
         end
         return x
     end
-
-    f(a), f(b) = fa, fb
+    (fa, fb) = (f(a), f(b))
     ϵ = atol + rtol * (abs(fa) + abs(fb)) / 2
-    if abs(fa) < ϵ
+    if abs(fa) <= ϵ
         return a, fa, 0
-    elseif abs(fb) < ϵ
+    elseif abs(fb) <= ϵ
         return b, fb, 0
     elseif fa * fb > 0
-        error("Hipóteses não satisfeitas")
+        return println("condições não satisfeitas")
     end
-    i = 0
-    x = escolha(f, a, b, estrategia)
+    x = _estrategia(f, a, b, :estrategia)
     fx = f(x)
+    iter = 1
     while !(abs(fx) <= ϵ || iter > maxiter)
         if fx * fa < 0
             b = x
         else
             a = x
         end
-        x = escolha(f, a, b, estrategia)
-        i +=1
+        x = _estrategia(f, a, b, :estrategia)
+        fx = f(x)
+        iter += 1
     end
-    return x, fx, i
+    return x, fx, iter
 end
